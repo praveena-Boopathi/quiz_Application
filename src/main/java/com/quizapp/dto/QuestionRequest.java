@@ -8,6 +8,7 @@ public class QuestionRequest {
     private String optionC;
     private String optionD;
     private String correctOption;
+    private String level;
 
     public QuestionRequest() {}
 
@@ -31,4 +32,7 @@ public class QuestionRequest {
 
     public String getCorrectOption() { return correctOption; }
     public void setCorrectOption(String correctOption) { this.correctOption = correctOption; }
+
+    public String getLevel() { return level; }
+    public void setLevel(String level) { this.level = level; }
 }

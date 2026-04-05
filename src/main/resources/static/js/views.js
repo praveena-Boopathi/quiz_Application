@@ -168,10 +168,16 @@ const views = {
                     <h3>Questions</h3>
                     <form id="addQuestionForm" class="mt-20">
                         <div class="form-group flex" style="gap: 15px;">
-                            <select id="qCategory" class="form-control" required>
+                            <select id="qCategory" class="form-control" required style="flex:1;">
                                 <option value="">Select Category</option>
                             </select>
-                            <input type="text" id="qText" class="form-control" placeholder="Question text" required style="flex:3;">
+                            <select id="qLevel" class="form-control" required style="flex:1;">
+                                <option value="">Select Level</option>
+                                <option value="BASICS">Basics</option>
+                                <option value="MEDIUM">Medium</option>
+                                <option value="ADVANCED">Advanced</option>
+                            </select>
+                            <input type="text" id="qText" class="form-control" placeholder="Question text" required style="flex:2;">
                         </div>
                         <div class="form-group flex" style="gap: 15px;">
                             <input type="text" id="qA" class="form-control" placeholder="Option A" required>

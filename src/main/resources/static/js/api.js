@@ -82,8 +82,8 @@ const api = {
     adminGetQuestions() {
         return this.request('/admin/questions');
     },
-    adminCreateQuestion(categoryId, text, optionA, optionB, optionC, optionD, correctOption) {
-        return this.request('/admin/questions', 'POST', { categoryId, text, optionA, optionB, optionC, optionD, correctOption });
+    adminCreateQuestion(categoryId, level, text, optionA, optionB, optionC, optionD, correctOption) {
+        return this.request('/admin/questions', 'POST', { categoryId, level, text, optionA, optionB, optionC, optionD, correctOption });
     },
     adminDeleteQuestion(id) {
         return this.request(`/admin/questions/${id}`, 'DELETE');

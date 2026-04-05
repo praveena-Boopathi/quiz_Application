@@ -417,18 +417,23 @@ const App = {
 
             document.getElementById('addQuestionForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
-                await api.adminCreateQuestion(
-                    document.getElementById('qCategory').value,
-                    document.getElementById('qText').value,
-                    document.getElementById('qA').value,
-                    document.getElementById('qB').value,
-                    document.getElementById('qC').value,
-                    document.getElementById('qD').value,
-                    document.getElementById('qCorrect').value
-                );
-                this.showToast('Question added!');
-                this.loadAdminQuestions();
-                e.target.reset();
+                try {
+                    await api.adminCreateQuestion(
+                        document.getElementById('qCategory').value,
+                        document.getElementById('qLevel').value,
+                        document.getElementById('qText').value,
+                        document.getElementById('qA').value,
+                        document.getElementById('qB').value,
+                        document.getElementById('qC').value,
+                        document.getElementById('qD').value,
+                        document.getElementById('qCorrect').value
+                    );
+                    this.showToast('Question added!');
+                    this.loadAdminQuestions();
+                    e.target.reset();
+                } catch (err) {
+                    this.showToast(err.message || 'Failed to add question', 'error');
+                }
             });
 
         } catch (err) {

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,8 @@ public class QuizService {
         Level level = Level.valueOf(levelStr.toUpperCase());
         List<Question> questions = questionRepository.findByCategoryIdAndLevel(categoryId, level);
         
+        Collections.shuffle(questions);
+        
         int limit = level == Level.BASICS ? 5 : (level == Level.MEDIUM ? 10 : 15);
         
         return questions.stream()
@@ -64,20 +67,25 @@ public class QuizService {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
         Level level = Level.valueOf(request.getLevel().toUpperCase());
-        List<Question> questions = questionRepository.findByCategoryIdAndLevel(category.getId(), level);
+        List<Question> allQuestions = questionRepository.findByCategoryIdAndLevel(category.getId(), level);
         int limit = level == Level.BASICS ? 5 : (level == Level.MEDIUM ? 10 : 15);
-        questions = questions.stream().limit(limit).collect(Collectors.toList());
         
         int score = 0;
         Map<Long, String> correctAnswers = new HashMap<>();
 
-        for (Question q : questions) {
-            correctAnswers.put(q.getId(), q.getCorrectOption());
-            String submittedAnswer = request.getAnswers().get(q.getId());
-            if (submittedAnswer != null && submittedAnswer.equalsIgnoreCase(q.getCorrectOption())) {
-                score++;
+        if (request.getAnswers() != null) {
+            for (Question q : allQuestions) {
+                if (request.getAnswers().containsKey(q.getId())) {
+                    correctAnswers.put(q.getId(), q.getCorrectOption());
+                    String submittedAnswer = request.getAnswers().get(q.getId());
+                    if (submittedAnswer != null && submittedAnswer.equalsIgnoreCase(q.getCorrectOption())) {
+                        score++;
+                    }
+                }
             }
         }
+        
+        score = Math.min(score, limit);
 
         // Save Attempt
         QuizAttempt attempt = new QuizAttempt();
@@ -85,13 +93,13 @@ public class QuizService {
         attempt.setCategory(category);
         attempt.setLevel(level);
         attempt.setScore(score);
-        attempt.setTotalQuestions(questions.size());
+        attempt.setTotalQuestions(limit);
         attempt.setStartTime(LocalDateTime.now()); // In a real app, startTime comes from a prior request
         attempt.setSubmitTime(LocalDateTime.now());
         attempt.setCompleted(true);
         quizAttemptRepository.save(attempt);
 
-        return new QuizResultResponse(score, questions.size(), correctAnswers);
+        return new QuizResultResponse(score, limit, correctAnswers);
     }
 
     public List<QuizAttemptDto> getUserAttempts(String username) {
